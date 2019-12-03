@@ -6,6 +6,8 @@
 
 #include <memory>
 
+#include "model.h"
+
 #define NUM_STARS 500
 
 class OpenGLWidget : public QOpenGLWidget, public QOpenGLExtraFunctions
@@ -15,36 +17,13 @@ class OpenGLWidget : public QOpenGLWidget, public QOpenGLExtraFunctions
 public:
     explicit OpenGLWidget(QWidget *parent = nullptr);
 
-    void createVBOs();
-    void createShaders();
-
-    void destroyVBOs();
-    void destroyShaders();
-
-    void readOFFFile(const QString &fileName);
-    void normalizeModel();
-    void createNormals();
-
 protected:
     void initializeGL();
     void resizeGL(int width, int height);
     void paintGL();
-    void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent *event);
 
 private:
-    GLuint vboVertices = 0;
-    GLuint vboNormals = 0;
-    GLuint vboIndices = 0;
-
-    GLuint vao = 0;
-    GLuint shaderProgram;
-
-    unsigned int numVertices = 0, numFaces = 0;
-    std::unique_ptr<QVector4D []> vertices = nullptr;
-    std::unique_ptr<QVector3D []> normals = nullptr;
-    std::unique_ptr<unsigned int[]> indices = nullptr;
-
+    std::shared_ptr<Model> model;
     QMatrix4x4 mProjection;
 
     QVector3D starPos[NUM_STARS], starRot[NUM_STARS];

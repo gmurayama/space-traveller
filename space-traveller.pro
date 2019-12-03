@@ -7,9 +7,11 @@ CONFIG += c++14
 
 SOURCES += main.cpp\
         mainwindow.cpp \
+    model.cpp \
     openglwidget.cpp
 
 HEADERS  += mainwindow.h \
+    model.h \
     openglwidget.h
 
 FORMS    += mainwindow.ui
