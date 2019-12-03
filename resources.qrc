@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/shaders">
+        <file>vshader.glsl</file>
+        <file>fshader.glsl</file>
+    </qresource>
+    <qresource prefix="/models">
+        <file>cube.off</file>
+    </qresource>
+</RCC>
