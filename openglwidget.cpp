@@ -19,9 +19,11 @@ void OpenGLWidget::initializeGL()
     qDebug("OpenGL version: %s", glGetString(GL_VERSION));
     qDebug("GLSL %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-    model = std::make_shared<Model>(this);
+    player.model = std::make_shared<Model>(this);
+    asteroidModel = std::make_shared<Model>(this);
 
-    model->readOFFFile(":/models/cube.off");
+    player.model->readOFFFile(":/models/spaceship.off");
+    asteroidModel->readOFFFile(":/models/cube.off");
 
     for(int i=0; i<NUM_STARS; ++i)
     {
@@ -68,30 +70,35 @@ void OpenGLWidget::paintGL()
         time1.restart();
     }
 
-    //QVector3D ambient = QVector3D(0.0f, 0.0f, 0.2f) * QVector3D(1.0f, 1.0f, 1.0f);
-    //QVector3D diffuse = QVector3D(1.0f, 1.0f, 0.7f) * QVector3D(0.9f, 0.8f, 0.8f);
-    //QVector3D specular = QVector3D(0.0f, 0.0f, 0.0f) * QVector3D(1.0f, 1.0f, 1.0f);
-    //QVector3D lightPos = QVector3D(0.0f, 0.0f, 0.0f);
+    light.ambient = QVector4D(0.0f, 0.0f, 0.2f, 1) * QVector4D(1.0f, 1.0f, 1.0f, 1);
+    light.diffuse = QVector4D(1.0f, 1.0f, 0.7f, 1) * QVector4D(0.9f, 0.8f, 0.8f, 1);
+    light.specular = QVector4D(0.0f, 0.0f, 0.0f, 1) * QVector4D(1.0f, 1.0f, 1.0f, 1);
+    light.position = QVector4D(0.0f, 0.0f, 0.0f, 0);
 
-    light.ambient = QVector3D(0.0f, 0.0f, 0.2f) * QVector3D(1.0f, 1.0f, 1.0f);
-    light.diffuse = QVector3D(1.0f, 1.0f, 0.7f) * QVector3D(0.9f, 0.8f, 0.8f);
-    light.specular = QVector3D(0.0f, 0.0f, 0.0f) * QVector3D(1.0f, 1.0f, 1.0f);
-    light.position = QVector3D(0.0f, 0.0f, 0.0f);
+    player.model->setLight(light);
+    player.drawModel(camera);
 
-    model->setLight(light);
+    asteroidModel->setLight(light);
 
     for(int i=0; i<NUM_STARS; ++i)
     {
-        model->drawModel(camera, starPos[i], starRot[i], angle);
+        asteroidModel->drawModel(camera, starPos[i], starRot[i], angle);
     }
 }
 
 void OpenGLWidget::animate()
-{   
+{
+    float factor = time2.elapsed() / 500.0f;
+    player.updatePosition(factor);
+    camera.center.setX(camera.center.x() + player.getPosXOffsetSum() * factor);
+    camera.eye.setX(camera.eye.x() + player.getPosXOffsetSum() * factor);
+    camera.computeViewMatrix();
+
     for(int i=0; i<NUM_STARS; ++i)
     {
         QVector3D pos = starPos[i];
         pos.setZ(pos.z() + time2.elapsed() / 100.0f);
+
         if (pos.z() > 1.0f)
         {
             pos.setX(((qrand() / (float)RAND_MAX) * 20.0f) - 10.0f);
@@ -103,6 +110,7 @@ void OpenGLWidget::animate()
             float z = (qrand() / (float)RAND_MAX) * 2.0f - 1.0f;
             starRot[i] = QVector3D(x,y,z).normalized();
         }
+
         starPos[i] = pos;
     }
 
@@ -110,4 +118,39 @@ void OpenGLWidget::animate()
     time2.restart();
 
     update();
+}
+
+void OpenGLWidget::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_D)
+    {
+        player.positionOffsetRight = 1.0f * 5;
+    }
+    if (event->key() == Qt::Key_A)
+    {
+        player.positionOffsetLeft = -1.0f * 5;
+    }
+
+    if (event->key() == Qt::Key_Space)
+    {
+
+    }
+
+    if (event->key() == Qt::Key_Space)
+    {
+        //QApplication::quit();
+    }
+}
+
+void OpenGLWidget::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_D)
+    {
+        player.positionOffsetRight = 0;
+    }
+
+    if (event->key() == Qt::Key_A)
+    {
+        player.positionOffsetLeft = 0;
+    }
 }

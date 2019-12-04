@@ -1,9 +1,10 @@
 <RCC>
     <qresource prefix="/shaders">
-        <file>vshader.glsl</file>
-        <file>fshader.glsl</file>
+        <file>vphong.glsl</file>
+        <file>fphong.glsl</file>
     </qresource>
     <qresource prefix="/models">
         <file>cube.off</file>
+        <file>spaceship.off</file>
     </qresource>
 </RCC>

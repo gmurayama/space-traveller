@@ -9,6 +9,7 @@
 #include "model.h"
 #include "camera.h"
 #include "light.h"
+#include "player.h"
 
 #define NUM_STARS 500
 
@@ -24,10 +25,15 @@ protected:
     void resizeGL(int width, int height);
     void paintGL();
 
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
+
 private:
-    std::shared_ptr<Model> model;
+    Player player;
     Camera camera;
     Light light;
+
+    std::shared_ptr<Model> asteroidModel;
 
     QVector3D starPos[NUM_STARS], starRot[NUM_STARS];
 

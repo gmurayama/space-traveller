@@ -10,13 +10,15 @@ SOURCES += main.cpp\
     light.cpp \
         mainwindow.cpp \
     model.cpp \
-    openglwidget.cpp
+    openglwidget.cpp \
+    player.cpp
 
 HEADERS  += mainwindow.h \
     camera.h \
     light.h \
     model.h \
-    openglwidget.h
+    openglwidget.h \
+    player.h
 
 FORMS    += mainwindow.ui
 
