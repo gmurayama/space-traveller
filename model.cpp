@@ -101,6 +101,7 @@ void Model::readOFFFile(const QString &fileName)
         indices[i * 3 + 2] = c;
     }
 
+    normalizeModel();
     createNormals();
     createShaders();
     createVBOs();

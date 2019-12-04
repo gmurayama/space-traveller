@@ -22,10 +22,6 @@ void OpenGLWidget::initializeGL()
     model = std::make_shared<Model>(this);
 
     model->readOFFFile(":/models/cube.off");
-    model->normalizeModel();
-    model->createNormals();
-    model->createShaders();
-    model->createVBOs();
 
     for(int i=0; i<NUM_STARS; ++i)
     {
