@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "camera.h"
+#include "light.h"
 
 class Model : public QOpenGLExtraFunctions
 {
@@ -22,6 +23,7 @@ public:
 
     void readOFFFile(const QString &fileName);
     void drawModel(Camera camera, QVector3D position, QVector3D rotation, float angle);
+    void setLight(Light light);
 
     GLuint shaderProgram;
     GLuint vao = 0;

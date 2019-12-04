@@ -14,6 +14,26 @@ Model::~Model()
     destroyShaders();
 }
 
+void Model::setLight(Light light)
+{
+    GLint locShininess = glGetUniformLocation(shaderProgram, "shininess");
+    GLint locAmbient = glGetUniformLocation(shaderProgram, "Ia");
+    GLint locDiffuse = glGetUniformLocation(shaderProgram, "Id");
+    GLint locSpecular = glGetUniformLocation(shaderProgram, "Is");
+    GLint locLightPos = glGetUniformLocation(shaderProgram, "lightPos");
+
+    glBindVertexArray(vao);
+    glUseProgram(shaderProgram);
+
+    float shininess = 128.0f;
+
+    glUniform3fv(locAmbient, 1, &(light.ambient[0]));
+    glUniform3fv(locDiffuse, 1, &(light.diffuse[0]));
+    glUniform3fv(locSpecular, 1, &(light.specular[0]));
+    glUniform1f(locShininess, shininess);
+    glUniform3fv(locLightPos, 1, &(light.position[0]));
+}
+
 void Model::drawModel(Camera camera, QVector3D position, QVector3D rotation, float angle)
 {
     GLint locProjectionMatrix = glGetUniformLocation(shaderProgram, "mProjection"); // projection matrix

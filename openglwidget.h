@@ -8,6 +8,7 @@
 
 #include "model.h"
 #include "camera.h"
+#include "light.h"
 
 #define NUM_STARS 500
 
@@ -26,6 +27,7 @@ protected:
 private:
     std::shared_ptr<Model> model;
     Camera camera;
+    Light light;
 
     QVector3D starPos[NUM_STARS], starRot[NUM_STARS];
 

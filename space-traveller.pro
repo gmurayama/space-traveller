@@ -7,12 +7,14 @@ CONFIG += c++14
 
 SOURCES += main.cpp\
     camera.cpp \
+    light.cpp \
         mainwindow.cpp \
     model.cpp \
     openglwidget.cpp
 
 HEADERS  += mainwindow.h \
     camera.h \
+    light.h \
     model.h \
     openglwidget.h
 

@@ -56,15 +56,6 @@ void OpenGLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    GLint locShininess = glGetUniformLocation(model->shaderProgram, "shininess");
-    GLint locAmbient = glGetUniformLocation(model->shaderProgram, "Ia");
-    GLint locDiffuse = glGetUniformLocation(model->shaderProgram, "Id");
-    GLint locSpecular = glGetUniformLocation(model->shaderProgram, "Is");
-    GLint locLightPos = glGetUniformLocation(model->shaderProgram, "lightPos");
-
-    glBindVertexArray(model->vao);
-    glUseProgram(model->shaderProgram);
-
     fpsCounter++;
 
     if(time1.elapsed() > 1000)
@@ -82,17 +73,12 @@ void OpenGLWidget::paintGL()
     //QVector3D specular = QVector3D(0.0f, 0.0f, 0.0f) * QVector3D(1.0f, 1.0f, 1.0f);
     //QVector3D lightPos = QVector3D(0.0f, 0.0f, 0.0f);
 
-    float shininess = 128.0f;
-    QVector3D ambient = QVector3D(0.0f, 0.0f, 0.2f) * QVector3D(1.0f, 1.0f, 1.0f);
-    QVector3D diffuse = QVector3D(1.0f, 1.0f, 0.7f) * QVector3D(0.9f, 0.8f, 0.8f);
-    QVector3D specular = QVector3D(0.0f, 0.0f, 0.0f) * QVector3D(1.0f, 1.0f, 1.0f);
-    QVector3D lightPos = QVector3D(0.0f, 0.0f, 0.0f);
+    light.ambient = QVector3D(0.0f, 0.0f, 0.2f) * QVector3D(1.0f, 1.0f, 1.0f);
+    light.diffuse = QVector3D(1.0f, 1.0f, 0.7f) * QVector3D(0.9f, 0.8f, 0.8f);
+    light.specular = QVector3D(0.0f, 0.0f, 0.0f) * QVector3D(1.0f, 1.0f, 1.0f);
+    light.position = QVector3D(0.0f, 0.0f, 0.0f);
 
-    glUniform3fv(locAmbient, 1, &(ambient[0]));
-    glUniform3fv(locDiffuse, 1, &(diffuse[0]));
-    glUniform3fv(locSpecular, 1, &(specular[0]));
-    glUniform1f(locShininess, shininess);
-    glUniform3fv(locLightPos, 1, &(lightPos[0]));
+    model->setLight(light);
 
     for(int i=0; i<NUM_STARS; ++i)
     {
