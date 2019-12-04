@@ -52,19 +52,14 @@ void OpenGLWidget::initializeGL()
 void OpenGLWidget::resizeGL(int width, int height)
 {
     glViewport(0, 0, width, height);
-    float aspectRatio = (float)width / (float)height;
-
-    mProjection.setToIdentity();
-    mProjection.perspective(20.0f, aspectRatio, 0.01f, 100.0f);
+    camera.resizeViewPort(width, height);
+    update();
 }
 
 void OpenGLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    GLint locProjectionMatrix = glGetUniformLocation(model->shaderProgram, "mProjection");
-    GLint locModelViewMatrix = glGetUniformLocation(model->shaderProgram, "mModelView");
-    GLint locNormalMatrix = glGetUniformLocation(model->shaderProgram, "mNormal");
     GLint locShininess = glGetUniformLocation(model->shaderProgram, "shininess");
     GLint locAmbient = glGetUniformLocation(model->shaderProgram, "Ia");
     GLint locDiffuse = glGetUniformLocation(model->shaderProgram, "Id");
@@ -86,11 +81,10 @@ void OpenGLWidget::paintGL()
         time1.restart();
     }
 
-    QMatrix4x4 mView;
-    mView.setToIdentity();
-    mView.lookAt(QVector3D(0.0f, 0.0f, 0.0f),
-                 QVector3D(0.0f, 0.0f, -1.0f),
-                 QVector3D(0.0f, 1.0f, 0.0f));
+    //QVector3D ambient = QVector3D(0.0f, 0.0f, 0.2f) * QVector3D(1.0f, 1.0f, 1.0f);
+    //QVector3D diffuse = QVector3D(1.0f, 1.0f, 0.7f) * QVector3D(0.9f, 0.8f, 0.8f);
+    //QVector3D specular = QVector3D(0.0f, 0.0f, 0.0f) * QVector3D(1.0f, 1.0f, 1.0f);
+    //QVector3D lightPos = QVector3D(0.0f, 0.0f, 0.0f);
 
     float shininess = 128.0f;
     QVector3D ambient = QVector3D(0.0f, 0.0f, 0.2f) * QVector3D(1.0f, 1.0f, 1.0f);
@@ -106,19 +100,7 @@ void OpenGLWidget::paintGL()
 
     for(int i=0; i<NUM_STARS; ++i)
     {
-        QMatrix4x4 mModel;
-        mModel.translate(starPos[i]);
-
-        QMatrix4x4 mModelView;
-        mModel.scale(0.2f);
-        mModel.rotate(angle, starRot[i]);
-        mModelView = mView * mModel;
-
-        glUniformMatrix4fv(locProjectionMatrix, 1, GL_FALSE, mProjection.data());
-        glUniformMatrix4fv(locModelViewMatrix, 1, GL_FALSE, mModelView.data());
-        glUniformMatrix3fv(locNormalMatrix, 1, GL_FALSE, mModelView.normalMatrix().data());
-
-        glDrawElements(GL_TRIANGLES, model->numFaces*3, GL_UNSIGNED_INT, nullptr);
+        model->drawModel(camera, starPos[i], starRot[i], angle);
     }
 }
 

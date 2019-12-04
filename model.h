@@ -12,6 +12,8 @@
 #include <iostream>
 #include <memory>
 
+#include "camera.h"
+
 class Model : public QOpenGLExtraFunctions
 {
 public:
@@ -19,6 +21,7 @@ public:
     ~Model();
 
     QOpenGLWidget *glWidget;
+    void drawModel(Camera camera, QVector3D position, QVector3D rotation, float angle);
 
     void createVBOs();
     void createShaders();

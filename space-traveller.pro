@@ -6,11 +6,13 @@ TEMPLATE = app
 CONFIG += c++14
 
 SOURCES += main.cpp\
+    camera.cpp \
         mainwindow.cpp \
     model.cpp \
     openglwidget.cpp
 
 HEADERS  += mainwindow.h \
+    camera.h \
     model.h \
     openglwidget.h
 

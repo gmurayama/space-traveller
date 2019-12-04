@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "model.h"
+#include "camera.h"
 
 #define NUM_STARS 500
 
@@ -24,7 +25,7 @@ protected:
 
 private:
     std::shared_ptr<Model> model;
-    QMatrix4x4 mProjection;
+    Camera camera;
 
     QVector3D starPos[NUM_STARS], starRot[NUM_STARS];
 
