@@ -22,6 +22,9 @@ void OpenGLWidget::initializeGL()
 
     player.model = std::make_shared<Model>(this);
     asteroidModel = std::make_shared<Model>(this);
+    asteroidModel->textureID = 0;
+    moonModel = std::make_shared<Model>(this);
+    moonModel->textureID = 0;
 
     light.ambient = QVector4D(0.0f, 0.0f, 0.2f, 1) * QVector4D(1.0f, 1.0f, 1.0f, 1);
     light.diffuse = QVector4D(1.0f, 1.0f, 0.7f, 1) * QVector4D(0.9f, 0.8f, 0.8f, 1);
@@ -78,15 +81,52 @@ void OpenGLWidget::paintGL()
         time1.restart();
     }
 
+    //
+    // PLAYER
+    //
+
+    if (!player.model)
+        return;
+
     player.model->setLight(light);
     player.drawModel(camera);
 
+    //
+    // ASTEROID
+    //
+
+    if (!asteroidModel)
+        return;
+
+
     asteroidModel->setLight(light);
+    QImage sunTex;
+    sunTex.load(QString(":/textures/fire.jpg"));
+    sunTex = sunTex.convertToFormat(QImage::Format_RGBA8888);
+
+    asteroidModel->loadTexture(sunTex);
 
     for(int i=0; i<NUM_STARS; ++i)
     {
         asteroidModel->drawModel(camera, starPos[i], 0.2f, starRot[i], angle);
     }
+
+    //
+    // MOON
+    //
+
+    if (!moonModel)
+        return;
+
+    moonModel->setLight(light);
+    moonModel->drawModel(camera, QVector3D(4, 4, -80), 4.0f, QVector3D(0, -1, 0), 0);
+
+    QImage moonTex;
+    moonTex.load(QString(":/textures/moon.jpg"));
+    moonTex = moonTex.convertToFormat(QImage::Format_RGBA8888);
+    moonModel->loadTexture(moonTex);
+
+    update();
 }
 
 void OpenGLWidget::animate()

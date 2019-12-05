@@ -35,6 +35,7 @@ private:
     Light light;
 
     std::shared_ptr<Model> asteroidModel;
+    std::shared_ptr<Model> moonModel;
 
     QVector3D starPos[NUM_STARS], starRot[NUM_STARS];
 
