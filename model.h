@@ -21,14 +21,19 @@ public:
     Model(QOpenGLWidget *_glWidget);
     ~Model();
 
-    void readOFFFile(const QString &fileName);
+    void readOFFFile(const QString &fileName, QString shaderName);
     void drawModel(Camera camera, QVector3D position, float scale, QVector3D rotation, float angle);
+    void loadTexture(const QImage &image);
+    void loadTextureLayer(const QImage &image);
     void setLight(Light light);
+
+    GLuint textureID = 0;
+    GLuint textureLayerID = 0;
 
 private:
     void normalizeModel();
     void createVBOs();
-    void createShaders();
+    void createShaders(QString shaderName);
     void createNormals();
     void destroyVBOs();
     void destroyShaders();
@@ -41,7 +46,6 @@ private:
 
     GLuint shaderProgram;
     GLuint vao = 0;
-    GLuint textureID = 0;
 
     GLuint vboVertices = 0;
     GLuint vboNormals = 0;

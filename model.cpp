@@ -16,18 +16,20 @@ Model::~Model()
 
 void Model::setLight(Light light)
 {
+    GLuint shaderProgramID = shaderProgram;
+
     QVector4D ambientProduct = light.ambient;
     QVector4D diffuseProduct = light.diffuse;
     QVector4D specularProduct = light.specular;
 
-    GLuint locLightPosition = glGetUniformLocation(shaderProgram, "lightPosition");
-    GLuint locAmbientProduct = glGetUniformLocation(shaderProgram, "ambientProduct");
-    GLuint locDiffuseProduct = glGetUniformLocation(shaderProgram, "diffuseProduct");
-    GLuint locSpecularProduct = glGetUniformLocation(shaderProgram, "specularProduct");
-    GLuint locShininess = glGetUniformLocation(shaderProgram, "shininess");
+    GLuint locLightPosition = glGetUniformLocation(shaderProgramID, "lightPosition");
+    GLuint locAmbientProduct = glGetUniformLocation(shaderProgramID, "ambientProduct");
+    GLuint locDiffuseProduct = glGetUniformLocation(shaderProgramID, "diffuseProduct");
+    GLuint locSpecularProduct = glGetUniformLocation(shaderProgramID, "specularProduct");
+    GLuint locShininess = glGetUniformLocation(shaderProgramID, "shininess");
 
     glBindVertexArray(vao);
-    glUseProgram(shaderProgram);
+    glUseProgram(shaderProgramID);
 
     float shininess = 128.0f;
 
@@ -35,15 +37,17 @@ void Model::setLight(Light light)
     glUniform4fv(locAmbientProduct, 1, &(ambientProduct[0]));
     glUniform4fv(locDiffuseProduct, 1, &(diffuseProduct[0]));
     glUniform4fv(locSpecularProduct, 1, &(specularProduct[0]));
-    glUniform1f(locShininess, 20.0f);
+    glUniform1f(locShininess, shininess);
 }
 
 void Model::drawModel(Camera camera, QVector3D position, float scale, QVector3D rotation, float angle)
 {
-    GLuint locProjection = glGetUniformLocation(shaderProgram, "projection");
-    GLuint locView = glGetUniformLocation(shaderProgram, "view");
-    GLuint locModel = glGetUniformLocation(shaderProgram, "model");
-    GLuint locNormalMatrix = glGetUniformLocation(shaderProgram, "normalMatrix");
+    GLuint shaderProgramID = shaderProgram;
+
+    GLuint locProjection = glGetUniformLocation(shaderProgramID, "projection");
+    GLuint locView = glGetUniformLocation(shaderProgramID, "view");
+    GLuint locModel = glGetUniformLocation(shaderProgramID, "model");
+    GLuint locNormalMatrix = glGetUniformLocation(shaderProgramID, "normalMatrix");
 
     QMatrix4x4 modelMatrix;
     modelMatrix.setToIdentity();
@@ -63,7 +67,7 @@ void Model::drawModel(Camera camera, QVector3D position, float scale, QVector3D 
     if (textureID)
     {
         GLuint locColorTexture = 0;
-        locColorTexture = glGetUniformLocation(shaderProgram, "colorTexture");
+        locColorTexture = glGetUniformLocation(shaderProgramID, "colorTexture");
         glUniform1i(locColorTexture, 0);
 
         glActiveTexture(GL_TEXTURE0);
@@ -73,7 +77,7 @@ void Model::drawModel(Camera camera, QVector3D position, float scale, QVector3D 
     glDrawElements(GL_TRIANGLES, numFaces * 3, GL_UNSIGNED_INT, nullptr);
 }
 
-void Model::readOFFFile(const QString &fileName)
+void Model::readOFFFile(const QString &fileName, QString shaderName)
 {
     QFile file(fileName);
     file.open(QFile::ReadOnly | QFile::Text);
@@ -140,7 +144,7 @@ void Model::readOFFFile(const QString &fileName)
     normalizeModel();
     createNormals();
     createTexCoords();
-    createShaders();
+    createShaders(shaderName);
     createVBOs();
 
     file.close();
@@ -193,12 +197,12 @@ void Model::normalizeModel()
     }
 }
 
-void Model::createShaders()
+void Model::createShaders(QString shaderName)
 {
     destroyShaders();
 
-    QString vShaderPath = QString(":/shaders/v%1.glsl").arg("phong");
-    QString fShaderPath = QString(":/shaders/f%1.glsl").arg("phong");
+    QString vShaderPath = QString(":/shaders/v%1.glsl").arg(shaderName);
+    QString fShaderPath = QString(":/shaders/f%1.glsl").arg(shaderName);
     QFile vs(vShaderPath);
     QFile fs(fShaderPath);
 
@@ -475,4 +479,40 @@ void Model::createTangents()
         double hand = QVector3D::dotProduct(b, bitangents[i]);
         tangents[i].setW((hand < 0.0) ? -1.0 : 1.0);
     }
+}
+
+void Model::loadTexture(const QImage &image)
+{
+    if (textureID)
+    {
+        glDeleteTextures(1, &textureID);
+    }
+
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+void Model::loadTextureLayer(const QImage &image)
+{
+    if (textureLayerID)
+    {
+        glDeleteTextures(1, &textureLayerID);
+    }
+
+    glGenTextures(1, &textureLayerID);
+    glBindTexture(GL_TEXTURE_2D, textureLayerID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
 }

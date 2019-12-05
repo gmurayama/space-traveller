@@ -28,8 +28,9 @@ void OpenGLWidget::initializeGL()
     light.specular = QVector4D(0.0f, 0.0f, 0.0f, 1) * QVector4D(1.0f, 1.0f, 1.0f, 1);
     light.position = QVector4D(0.0f, 0.0f, 0.0f, 0);
 
-    player.model->readOFFFile(":/models/spaceship.off");
-    asteroidModel->readOFFFile(":/models/cube.off");
+    player.model->readOFFFile(":/models/spaceship.off", "phong");
+    asteroidModel->readOFFFile(":/models/cube.off", "texture");
+    moonModel->readOFFFile(":/models/sphere.off", "texture");
 
     for(int i=0; i<NUM_STARS; ++i)
     {
