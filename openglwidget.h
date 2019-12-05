@@ -5,6 +5,7 @@
 #include <QOpenGLExtraFunctions>
 
 #include <memory>
+#include <math.h>
 
 #include "model.h"
 #include "camera.h"
@@ -39,6 +40,8 @@ private:
 
     QTimer timer;
     QTime time1, time2;
+    QTime timeSpeed;
+
 
     double fpsCounter = 0;
     float angle = 0;
