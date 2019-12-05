@@ -8,5 +8,11 @@
     <qresource prefix="/models">
         <file>cube.off</file>
         <file>spaceship.off</file>
+        <file>sphere.off</file>
+    </qresource>
+    <qresource prefix="/textures">
+        <file>moon.jpg</file>
+        <file>metal.jpg</file>
+        <file>fire.jpg</file>
     </qresource>
 </RCC>
