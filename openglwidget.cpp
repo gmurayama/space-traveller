@@ -84,7 +84,7 @@ void OpenGLWidget::paintGL()
 
     for(int i=0; i<NUM_STARS; ++i)
     {
-        asteroidModel->drawModel(camera, starPos[i], starRot[i], angle);
+        asteroidModel->drawModel(camera, starPos[i], 0.2f, starRot[i], angle);
     }
 }
 

@@ -22,7 +22,7 @@ public:
     ~Model();
 
     void readOFFFile(const QString &fileName);
-    void drawModel(Camera camera, QVector3D position, QVector3D rotation, float angle);
+    void drawModel(Camera camera, QVector3D position, float scale, QVector3D rotation, float angle);
     void setLight(Light light);
 
 private:

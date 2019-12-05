@@ -18,7 +18,7 @@ float Player::drawModel(Camera camera)
 {
     if (!isDead)
     {
-        model->drawModel(camera, position, rotation, angle);
+        model->drawModel(camera, position, 0.2f, rotation, angle);
     }
 }
 
